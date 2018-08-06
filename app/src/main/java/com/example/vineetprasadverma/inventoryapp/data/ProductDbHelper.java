@@ -10,12 +10,12 @@ import com.example.vineetprasadverma.inventoryapp.data.ProductContract.ProductEn
 public class ProductDbHelper extends SQLiteOpenHelper {
 
     //Name of the database file
-    public static final String DATABASE_NAME = "products.db";
+    private static final String DATABASE_NAME = "products.db";
 
     // If we change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 1;
 
-    public static final String LOG_TAG = ProductDbHelper.class.getSimpleName();
+    private static final String LOG_TAG = ProductDbHelper.class.getSimpleName();
 
     /**
      * Constructs a new instance of ProductDbHelper.
@@ -31,10 +31,10 @@ public class ProductDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String SQL_CREATE_BOOKS_TABLE = "CREATE TABLE " + ProductContract.ProductEntry.TABLE_NAME + "("
                 + ProductEntry.COLUMN_PRODUCT_NAME + " TEXT NOT NULL, "
-                + ProductEntry.COLUMN_PRODUCT_PRICE + " INTEGER NOT NULL, "
+                + ProductEntry.COLUMN_PRODUCT_PRICE + " REAL NOT NULL, "
                 + ProductEntry.COLUMN_PRODUCT_QUANTITY + " INTEGER NOT NULL, "
                 + ProductEntry.COLUMN_PRODUCT_SUPPLIER_NAME + " TEXT NOT NULL, "
-                + ProductEntry.COLUMN_PRODUCT_SUPPLIER_PHONE_NUMBER + " INTEGER NOT NULL );";
+                + ProductEntry.COLUMN_PRODUCT_SUPPLIER_PHONE_NUMBER + " TEXT NOT NULL );";
         Log.i(LOG_TAG, SQL_CREATE_BOOKS_TABLE);
 
         //Execute the SQL statement.

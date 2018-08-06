@@ -10,9 +10,11 @@ import android.util.Log;
 import com.example.vineetprasadverma.inventoryapp.data.ProductContract.ProductEntry;
 import com.example.vineetprasadverma.inventoryapp.data.ProductDbHelper;
 
+import java.security.PrivateKey;
+
 public class MainActivity extends AppCompatActivity {
 
-    ProductDbHelper mDbHelper;
+    private ProductDbHelper mDbHelper;
 
     public static final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -34,10 +36,10 @@ public class MainActivity extends AppCompatActivity {
         // Create a new map of values, where column names are the keys.
         ContentValues values = new ContentValues();
         values.put(ProductEntry.COLUMN_PRODUCT_NAME, "Wings of fire");
-        values.put(ProductEntry.COLUMN_PRODUCT_PRICE, 50);
-        values.put(ProductEntry.COLUMN_PRODUCT_QUANTITY, 5);
+        values.put(ProductEntry.COLUMN_PRODUCT_PRICE, 50.5);
+        values.put(ProductEntry.COLUMN_PRODUCT_QUANTITY, 53);
         values.put(ProductEntry.COLUMN_PRODUCT_SUPPLIER_NAME, "Vineet");
-        values.put(ProductEntry.COLUMN_PRODUCT_SUPPLIER_PHONE_NUMBER, 898579674);
+        values.put(ProductEntry.COLUMN_PRODUCT_SUPPLIER_PHONE_NUMBER, "8985796745");
 
         // Insert the new row, returning the primary key value of the new row
         long newRowId = db.insert(ProductEntry.TABLE_NAME, null, values);
@@ -80,15 +82,15 @@ public class MainActivity extends AppCompatActivity {
                 // Use that index to extract the String or Int value of the word
                 // at the current row the cursor is on.
                 String currentProductName = cursor.getString(nameColumnIndex);
-                int currentProductPrice = cursor.getInt(priceColumnIndex);
+                float currentProductPrice = cursor.getFloat(priceColumnIndex);
                 int currentProductQuantity = cursor.getInt(quantityColumnIndex);
                 String currentProductSupplierName = cursor.getString(supplierNameColumnIndex);
-                int currentProductSupplierPhoneNumber = cursor.getInt(supplierPhoneNumberColumnIndex);
+                String currentProductSupplierPhoneNumber = cursor.getString(supplierPhoneNumberColumnIndex);
                 Log.i(LOG_TAG, currentProductName
                         + " - " + String.valueOf(currentProductPrice)
                         + " - " + String.valueOf(currentProductQuantity)
                         + " - " + currentProductSupplierName
-                        + " - " + String.valueOf(currentProductSupplierPhoneNumber));
+                        + " - " + currentProductSupplierPhoneNumber);
             }
         } finally {
             // Always close the cursor when you're done reading from it. This releases all its

@@ -4,6 +4,8 @@ import android.provider.BaseColumns;
 
 public class ProductContract {
 
+    private ProductContract(){
+    }
     /**
      * Here the product is the Book.
      * Inner class that defines constant values for the Books database table.
