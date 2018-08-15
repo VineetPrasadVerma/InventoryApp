@@ -7,9 +7,11 @@
     tools:context=".CatalogActivity">
 
     <ListView
-        android:layout_height="match_parent"
+        android:id="@+id/list"
         android:layout_width="match_parent"
-        android:padding="@dimen/sixteen_dp"/>
+        android:layout_height="match_parent"
+        android:drawSelectorOnTop="true"
+        android:padding="@dimen/sixteen_dp" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
@@ -19,6 +21,6 @@
         android:layout_alignParentRight="true"
         android:layout_margin="16dp"
         android:src="@drawable/ic_book_stack"
-        app:rippleColor="@color/color_Primary"/>
+        app:rippleColor="@color/color_Primary" />
 
 </RelativeLayout>

@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ListView;
 
 import com.example.vineetprasadverma.inventoryapp.data.ProductContract.ProductEntry;
 import com.example.vineetprasadverma.inventoryapp.data.ProductDbHelper;
@@ -18,6 +19,7 @@ import com.example.vineetprasadverma.inventoryapp.data.ProductDbHelper;
 public class CatalogActivity extends AppCompatActivity {
 
     private ProductDbHelper mDbHelper;
+    ProductCursorAdapter mCursorAdapter;
 
     public static final String LOG_TAG = CatalogActivity.class.getSimpleName();
 
@@ -36,6 +38,11 @@ public class CatalogActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+
+        ListView listView = findViewById(R.id.list);
+        mCursorAdapter = new ProductCursorAdapter(this, null);
+        listView.setAdapter(mCursorAdapter);
     }
 
     private void insertData() {
@@ -61,6 +68,7 @@ public class CatalogActivity extends AppCompatActivity {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
         String[] projection = {
+                ProductEntry._ID,
                 ProductEntry.COLUMN_PRODUCT_NAME,
                 ProductEntry.COLUMN_PRODUCT_PRICE,
                 ProductEntry.COLUMN_PRODUCT_QUANTITY,
