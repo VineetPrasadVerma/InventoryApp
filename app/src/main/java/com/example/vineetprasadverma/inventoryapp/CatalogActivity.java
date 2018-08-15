@@ -1,7 +1,10 @@
 package com.example.vineetprasadverma.inventoryapp;
 
+import android.app.LoaderManager;
 import android.content.ContentValues;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.Loader;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.design.widget.FloatingActionButton;
@@ -11,15 +14,17 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.vineetprasadverma.inventoryapp.data.ProductContract.ProductEntry;
 import com.example.vineetprasadverma.inventoryapp.data.ProductDbHelper;
 
-public class CatalogActivity extends AppCompatActivity {
+public class CatalogActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private ProductDbHelper mDbHelper;
     ProductCursorAdapter mCursorAdapter;
+    private static final int PET_LOADER = 0;
 
     public static final String LOG_TAG = CatalogActivity.class.getSimpleName();
 
@@ -43,6 +48,17 @@ public class CatalogActivity extends AppCompatActivity {
         ListView listView = findViewById(R.id.list);
         mCursorAdapter = new ProductCursorAdapter(this, null);
         listView.setAdapter(mCursorAdapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(CatalogActivity.this, EditorActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        //Kick off the loader
+        getLoaderManager().initLoader(PET_LOADER, null, this);
     }
 
     private void insertData() {
@@ -59,7 +75,7 @@ public class CatalogActivity extends AppCompatActivity {
 
         // Insert the new row, returning the primary key value of the new row
         long newRowId = db.insert(ProductEntry.TABLE_NAME, null, values);
-        Log.i(LOG_TAG,String.valueOf(newRowId));
+        Log.i(LOG_TAG, String.valueOf(newRowId));
     }
 
     private void readData() {
@@ -127,13 +143,48 @@ public class CatalogActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.action_insert_book :
+        switch (item.getItemId()) {
+            case R.id.action_insert_book:
                 return true;
 
-            case R.id.action_delete_all_books :
+            case R.id.action_delete_all_books:
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        // Now create and return a CursorLoader that will take care of
+        // creating a Cursor for the data being displayed.
+
+        String[] projection = {
+                ProductEntry._ID,
+                ProductEntry.COLUMN_PRODUCT_NAME,
+                ProductEntry.COLUMN_PRODUCT_PRICE,
+                ProductEntry.COLUMN_PRODUCT_QUANTITY
+        };
+
+        return new CursorLoader(this,
+                ProductEntry.CONTENT_URI,
+                projection,
+                null,
+                null,
+                null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        // Swap the new cursor in. (The framework will take care of closing the
+        // old cursor once we return.)
+        mCursorAdapter.swapCursor(cursor);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        // This is called when the last Cursor provided to onLoadFinished()
+        // above is about to be closed. We need to make sure we are no
+        // longer using it.
+        mCursorAdapter.swapCursor(null);
     }
 }
