@@ -13,4 +13,7 @@
     <string name="action_save">save</string>
     <string name="insert_book">Insert Book</string>
     <string name="delete_all_books">Delete All Books</string>
+    <string name="sale">Sale</string>
+    <string name="available_quantity">Available Quantity \u0020</string>
+    <string name="price_tag">Price \u0020</string>
 </resources>
