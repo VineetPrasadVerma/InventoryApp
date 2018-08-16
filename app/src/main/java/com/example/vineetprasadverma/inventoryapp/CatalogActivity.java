@@ -1,13 +1,16 @@
 package com.example.vineetprasadverma.inventoryapp;
 
 import android.app.LoaderManager;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
+import android.database.Cursor;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,13 +21,11 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.vineetprasadverma.inventoryapp.data.ProductContract.ProductEntry;
-import com.example.vineetprasadverma.inventoryapp.data.ProductDbHelper;
 
 public class CatalogActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private ProductDbHelper mDbHelper;
     ProductCursorAdapter mCursorAdapter;
-    private static final int PET_LOADER = 0;
+    private static final int PRODUCT_LOADER = 0;
 
     public static final String LOG_TAG = CatalogActivity.class.getSimpleName();
 
@@ -32,8 +33,6 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.catalog_activity);
-
-        mDbHelper = new ProductDbHelper(this);
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -44,26 +43,30 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
             }
         });
 
+        ListView bookListView = findViewById(R.id.list);
 
-        ListView listView = findViewById(R.id.list);
+        // Find and set empty view on the ListView, so that it only shows when the list has 0 items.
+        View emptyView = findViewById(R.id.empty_view);
+        bookListView.setEmptyView(emptyView);
+
         mCursorAdapter = new ProductCursorAdapter(this, null);
-        listView.setAdapter(mCursorAdapter);
+        bookListView.setAdapter(mCursorAdapter);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        bookListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(CatalogActivity.this, EditorActivity.class);
+                Uri currentUri = ContentUris.withAppendedId(ProductEntry.CONTENT_URI, id);
+                intent.setData(currentUri);
                 startActivity(intent);
             }
         });
 
         //Kick off the loader
-        getLoaderManager().initLoader(PET_LOADER, null, this);
+        getLoaderManager().initLoader(PRODUCT_LOADER, null, this);
     }
 
-    private void insertData() {
-        // Gets the data repository in write mode.
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+    private void insertBook() {
 
         // Create a new map of values, where column names are the keys.
         ContentValues values = new ContentValues();
@@ -73,63 +76,11 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
         values.put(ProductEntry.COLUMN_PRODUCT_SUPPLIER_NAME, "Vineet");
         values.put(ProductEntry.COLUMN_PRODUCT_SUPPLIER_PHONE_NUMBER, "8985796745");
 
-        // Insert the new row, returning the primary key value of the new row
-        long newRowId = db.insert(ProductEntry.TABLE_NAME, null, values);
-        Log.i(LOG_TAG, String.valueOf(newRowId));
-    }
-
-    private void readData() {
-
-        // Create and/or open a database to read from it.
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
-
-        String[] projection = {
-                ProductEntry._ID,
-                ProductEntry.COLUMN_PRODUCT_NAME,
-                ProductEntry.COLUMN_PRODUCT_PRICE,
-                ProductEntry.COLUMN_PRODUCT_QUANTITY,
-                ProductEntry.COLUMN_PRODUCT_SUPPLIER_NAME,
-                ProductEntry.COLUMN_PRODUCT_SUPPLIER_PHONE_NUMBER
-        };
-
-        Cursor cursor = db.query(
-                ProductEntry.TABLE_NAME,   // The table to query
-                projection,             // The array of columns to return (pass null to get all)
-                null,              // The columns for the WHERE clause
-                null,          // The values for the WHERE clause
-                null,                   // don't group the rows
-                null,                   // don't filter by row groups
-                null              // The sort order
-        );
-
-        try {
-            // Figure out the index of each column
-            int nameColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_NAME);
-            int priceColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_PRICE);
-            int quantityColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_QUANTITY);
-            int supplierNameColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_SUPPLIER_NAME);
-            int supplierPhoneNumberColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_SUPPLIER_PHONE_NUMBER);
-
-            // Iterate through all the returned rows in the cursor
-            while (cursor.moveToNext()) {
-                // Use that index to extract the String or Int value of the word
-                // at the current row the cursor is on.
-                String currentProductName = cursor.getString(nameColumnIndex);
-                float currentProductPrice = cursor.getFloat(priceColumnIndex);
-                int currentProductQuantity = cursor.getInt(quantityColumnIndex);
-                String currentProductSupplierName = cursor.getString(supplierNameColumnIndex);
-                String currentProductSupplierPhoneNumber = cursor.getString(supplierPhoneNumberColumnIndex);
-                Log.i(LOG_TAG, currentProductName
-                        + " - " + String.valueOf(currentProductPrice)
-                        + " - " + String.valueOf(currentProductQuantity)
-                        + " - " + currentProductSupplierName
-                        + " - " + currentProductSupplierPhoneNumber);
-            }
-        } finally {
-            // Always close the cursor when you're done reading from it. This releases all its
-            // resources and makes it invalid.
-            cursor.close();
-        }
+        // Insert a new row for Toto into the provider using the ContentResolver.
+        // Use the {@link PetEntry#CONTENT_URI} to indicate that we want to insert
+        // into the pets database table.
+        // Receive the new content URI that will allow us to access Toto's data in the future.
+        Uri newUri = getContentResolver().insert(ProductEntry.CONTENT_URI, values);
     }
 
 
@@ -145,12 +96,48 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_insert_book:
+                insertBook();
                 return true;
 
             case R.id.action_delete_all_books:
+                showDeleteConfirmationDialog();
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showDeleteConfirmationDialog() {
+        // Create an AlertDialog.Builder and set the message, and click listeners
+        // for the postivie and negative buttons on the dialog.
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.are_you_sure);
+        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked the "Delete" button, so delete the pet.
+                deleteAllProduct();
+            }
+        });
+        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked the "Cancel" button, so dismiss the dialog
+                // and continue editing the pet.
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
+            }
+        });
+
+        // Create and show the AlertDialog
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    /**
+     * Helper method to delete all pets in the database.
+     */
+    private void deleteAllProduct() {
+        int rowsDeleted = getContentResolver().delete(ProductEntry.CONTENT_URI, null, null);
+        Log.v("CatalogActivity", rowsDeleted + " rows deleted from pet database");
     }
 
     @Override

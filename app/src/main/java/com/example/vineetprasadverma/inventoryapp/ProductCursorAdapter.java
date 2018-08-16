@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 
@@ -41,11 +42,11 @@ public class ProductCursorAdapter extends CursorAdapter {
 
         int bookColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_NAME);
         int priceColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_PRICE);
-        int quantiyColumnINdex = cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_QUANTITY);
+        int quantityColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_QUANTITY);
 
         String bookName = cursor.getString(bookColumnIndex);
         float price = cursor.getFloat(priceColumnIndex);
-        int quantity = cursor.getInt(quantiyColumnINdex);
+        int quantity = cursor.getInt(quantityColumnIndex);
 
         bookTextView.setText(bookName);
         priceTextView.setText(String.valueOf(price));

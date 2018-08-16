@@ -4,4 +4,5 @@
     <dimen name="four_dp">4dp</dimen>
     <dimen name="zero_dp">0dp</dimen>
     <dimen name="fourty_dp">40dp</dimen>
+    <dimen name="hundred_dp">100dp</dimen>
 </resources>

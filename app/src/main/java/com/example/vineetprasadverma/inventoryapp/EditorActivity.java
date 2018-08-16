@@ -24,11 +24,11 @@ public class EditorActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.action_save :
+        switch (item.getItemId()) {
+            case R.id.action_save:
                 return true;
 
-            case R.id.action_delete :
+            case R.id.action_delete:
                 return true;
         }
         return super.onOptionsItemSelected(item);
