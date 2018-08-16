@@ -28,4 +28,9 @@
     <string name="editor_insert_product_successful">Book Saved</string>
     <string name="editor_update_product_failed">Error updating book.</string>
     <string name="editor_update_product_successful">Book Updated succesfully</string>
+    <string name="delete_dialog_msg">Delete this book ?</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+    <string name="editor_delete_product_failed">Delete book failed</string>
+    <string name="editor_delete_procduct_successful">Book deleted succesfully.</string>
 </resources>

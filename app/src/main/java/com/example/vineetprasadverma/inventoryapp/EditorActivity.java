@@ -2,6 +2,7 @@ package com.example.vineetprasadverma.inventoryapp;
 
 import android.content.ContentValues;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -9,6 +10,7 @@ import android.os.Bundle;
 import android.app.LoaderManager;
 import android.support.v4.app.NavUtils;
 import android.content.Loader;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -86,7 +88,6 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         String supplierNameString = mSupplierNameEditText.getText().toString().trim();
         String supplierPhoneNoString = mSupplierPhoneNoEditText.getText().toString().trim();
 
-
         // Check if this is supposed to be a new book
         // and check if all the fields in the editor are blank.
         if (mCurrentProductUri == null &&
@@ -95,6 +96,10 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                 TextUtils.isEmpty(supplierPhoneNoString)) {
             Toast.makeText(this, getString(R.string.cant_save_empty_book), Toast.LENGTH_SHORT).show();
             return;
+        }
+
+        if(TextUtils.isEmpty(priceString)){
+            priceString = "0";
         }
 
         // Create a ContentValues object where column names are the keys,
@@ -162,6 +167,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                 return true;
 
             case R.id.action_delete:
+                showDeleteConfirmationDialog();
                 return true;
 
             // Respond to a click on the "Up" arrow button in the app bar
@@ -175,6 +181,57 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showDeleteConfirmationDialog() {
+        // Create an AlertDialog.Builder and set the message, and click listeners
+        // for the postivie and negative buttons on the dialog.
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.delete_dialog_msg);
+        builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked the "Delete" button, so delete the pet.
+                deleteBook();
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked the "Cancel" button, so dismiss the dialog
+                // and continue editing the pet.
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
+            }
+        });
+
+        // Create and show the AlertDialog
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    /**
+     * Perform the deletion of the book in the database.
+     */
+    private void deleteBook() {
+        // Only perform the delete if this is an existing product.
+        if (mCurrentProductUri != null) {
+            // Call the ContentResolver to delete the product at the given content URI.
+            // Pass in null for the selection and selection args because the mCurrentPetUri
+            // content URI already identifies the pet that we want.
+            int rowsDeleted = getContentResolver().delete(mCurrentProductUri, null, null);
+            // Show a toast message depending on whether or not the delete was successful.
+            if (rowsDeleted == 0) {
+                // If no rows were deleted, then there was an error with the delete.
+                Toast.makeText(this, getString(R.string.editor_delete_product_failed),
+                        Toast.LENGTH_SHORT).show();
+            } else {
+                // Otherwise, the delete was successful and we can display a toast.
+                Toast.makeText(this, getString(R.string.editor_delete_procduct_successful),
+                        Toast.LENGTH_SHORT).show();
+            }
+        }
+        // Close the activity
+        finish();
     }
 
 
