@@ -28,11 +28,27 @@ public class EditorActivity extends AppCompatActivity {
 
         if(mCurrentProductUri == null){
             setTitle(getString(R.string.add_book));
+
+            // Invalidate the options menu, so the "Delete" menu option can be hidden.
+            // (It doesn't make sense to delete a pet that hasn't been created yet.)
+            invalidateOptionsMenu();
         }else{
             setTitle(getString(R.string.edit_book));
         }
 
     }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        // If this is a new product, hide the "Delete" menu item.
+        if (mCurrentProductUri == null) {
+            MenuItem menuItem = menu.findItem(R.id.action_delete);
+            menuItem.setVisible(false);
+        }
+        return true;
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
