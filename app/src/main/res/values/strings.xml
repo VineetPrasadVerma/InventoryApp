@@ -40,4 +40,8 @@
     <string name="sold_book">Book sold successfully</string>
     <string name="book_cannot_be_sold_unknown_error">Book cannot be sold due to unknown error</string>
     <string name="not_in_stock">Book not in stock</string>
+    <string name="eighty">₹ 80.0</string>
+    <string name="book_details">BOOK DETAILS</string>
+    <string name="supplier_details">SUPPLIER DETAILS</string>
+    <string name="quantity_tag">QUANTITY</string>
 </resources>
