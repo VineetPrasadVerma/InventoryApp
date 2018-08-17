@@ -22,6 +22,7 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="add_book">Add Book</string>
+    <string name="label_book_detail">Book Details</string>
     <string name="edit_book">Edit Book</string>
     <string name="cant_save_empty_book">Can\'t save empty book</string>
     <string name="editor_insert_product_failed">Error with saving book.</string>
@@ -44,4 +45,6 @@
     <string name="book_details">BOOK DETAILS</string>
     <string name="supplier_details">SUPPLIER DETAILS</string>
     <string name="quantity_tag">QUANTITY</string>
+    <string name="book_cant_be_neative">Books can\'t be negative</string>
+    <string name="invalid_quantity">Invalid Quantity</string>
 </resources>

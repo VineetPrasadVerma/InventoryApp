@@ -27,7 +27,7 @@
         <activity
             android:name=".ProductDetails"
             android:parentActivityName=".CatalogActivity"
-            android:label="@string/book_details">
+            android:label="@string/label_book_detail">
         </activity>
         <provider
             android:name=".data.ProductProvider"

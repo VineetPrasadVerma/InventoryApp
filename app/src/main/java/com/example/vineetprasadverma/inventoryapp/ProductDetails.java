@@ -1,6 +1,8 @@
 package com.example.vineetprasadverma.inventoryapp;
 
 import android.app.LoaderManager;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,10 +13,12 @@ import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +33,9 @@ public class ProductDetails extends AppCompatActivity implements LoaderManager.L
     private TextView mSupplierPhoneNoTextView;
     private TextView mQuantityTextView;
     private Button mOrderButton;
+    private Button mIncrementButton;
+    private Button mDecrementButton;
+    private EditText mEnterQuantity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +51,9 @@ public class ProductDetails extends AppCompatActivity implements LoaderManager.L
         mSupplierPhoneNoTextView = findViewById(R.id.details_supplier_phone_no);
         mQuantityTextView = findViewById(R.id.details_quantity);
         mOrderButton = findViewById(R.id.order_button);
+        mIncrementButton = findViewById(R.id.increment_button);
+        mDecrementButton = findViewById(R.id.decrement_button);
+        mEnterQuantity = findViewById(R.id.detail_enter_quantity);
 
         getLoaderManager().initLoader(PRODUCT_LOADER, null, this);
     }
@@ -179,6 +189,45 @@ public class ProductDetails extends AppCompatActivity implements LoaderManager.L
             mQuantityTextView.setText(String.valueOf(quantity));
             mSupplierNameTextView.setText(supplierName);
             mSupplierPhoneNoTextView.setText(phoneNo);
+
+            String quantityString = mEnterQuantity.getText().toString().trim();
+            if (!TextUtils.isEmpty(quantityString)) {
+                int newQuantity = Integer.valueOf(quantityString);
+                ContentValues values = new ContentValues();
+                values.put(ProductEntry.COLUMN_PRODUCT_QUANTITY, newQuantity);
+                getContentResolver().update(mCurrentProductUri, values, null, null);
+                mQuantityTextView.setText(String.valueOf(newQuantity));
+            }
+
+            mIncrementButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String quantity = mQuantityTextView.getText().toString();
+                    if (Integer.valueOf(quantity) >= 0) {
+                        int newQuantity = Integer.valueOf(quantity) + 1;
+                        ContentValues values = new ContentValues();
+                        values.put(ProductEntry.COLUMN_PRODUCT_QUANTITY, newQuantity);
+                        getContentResolver().update(mCurrentProductUri, values, null, null);
+                        mQuantityTextView.setText(String.valueOf(newQuantity));
+                    }
+                }
+            });
+
+            mDecrementButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String quantity = mQuantityTextView.getText().toString();
+                    if (Integer.valueOf(quantity) > 0) {
+                        int newQuantity = Integer.valueOf(quantity) - 1;
+                        ContentValues values = new ContentValues();
+                        values.put(ProductEntry.COLUMN_PRODUCT_QUANTITY, newQuantity);
+                        getContentResolver().update(mCurrentProductUri, values, null, null);
+                        mQuantityTextView.setText(String.valueOf(newQuantity));
+                    } else {
+                        Toast.makeText(ProductDetails.this, R.string.book_cant_be_neative, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
 
             mOrderButton.setOnClickListener(new View.OnClickListener() {
                 @Override
