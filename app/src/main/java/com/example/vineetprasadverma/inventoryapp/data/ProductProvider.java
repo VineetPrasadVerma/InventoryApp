@@ -210,21 +210,27 @@ public class ProductProvider extends ContentProvider {
         }
 
         // If the quantity is provided, check that it's greater than or equal to 0 kg
-        Integer quantity = values.getAsInteger(ProductEntry.COLUMN_PRODUCT_QUANTITY);
-        if (quantity != null && quantity < 0) {
-            throw new IllegalArgumentException("Books requires valid quantity.");
+        if(values.containsKey(ProductEntry.COLUMN_PRODUCT_QUANTITY)) {
+            Integer quantity = values.getAsInteger(ProductEntry.COLUMN_PRODUCT_QUANTITY);
+            if (quantity != null && quantity < 0) {
+                throw new IllegalArgumentException("Books requires valid quantity.");
+            }
         }
 
         // Check that the supplier name is not null
-        String supplierName = values.getAsString(ProductEntry.COLUMN_PRODUCT_SUPPLIER_NAME);
-        if (supplierName == null) {
-            throw new IllegalArgumentException("Book requires a supplier name.");
+        if(values.containsKey(ProductEntry.COLUMN_PRODUCT_SUPPLIER_NAME)) {
+            String supplierName = values.getAsString(ProductEntry.COLUMN_PRODUCT_SUPPLIER_NAME);
+            if (supplierName == null) {
+                throw new IllegalArgumentException("Book requires a supplier name.");
+            }
         }
 
         // Check that the supplier phone no is not null
-        String supplierPhoneNumber = values.getAsString(ProductEntry.COLUMN_PRODUCT_SUPPLIER_PHONE_NUMBER);
-        if (supplierPhoneNumber == null) {
-            throw new IllegalArgumentException("Book requires a valid supplier phone number");
+        if(values.containsKey(ProductEntry.COLUMN_PRODUCT_SUPPLIER_PHONE_NUMBER)) {
+            String supplierPhoneNumber = values.getAsString(ProductEntry.COLUMN_PRODUCT_SUPPLIER_PHONE_NUMBER);
+            if (supplierPhoneNumber == null) {
+                throw new IllegalArgumentException("Book requires a valid supplier phone number");
+            }
         }
 
         // If there are no values to update, then don't try to update the database

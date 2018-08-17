@@ -22,12 +22,14 @@ import android.widget.ListView;
 
 import com.example.vineetprasadverma.inventoryapp.data.ProductContract.ProductEntry;
 
-public class CatalogActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class CatalogActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, ProductCursorAdapter.ProductItemClickListener {
 
     ProductCursorAdapter mCursorAdapter;
     private static final int PRODUCT_LOADER = 0;
 
     public static final String LOG_TAG = CatalogActivity.class.getSimpleName();
+
+    public static ListView bookListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,13 +45,13 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
             }
         });
 
-        ListView bookListView = findViewById(R.id.list);
+        bookListView = findViewById(R.id.list);
 
         // Find and set empty view on the ListView, so that it only shows when the list has 0 items.
         View emptyView = findViewById(R.id.empty_view);
         bookListView.setEmptyView(emptyView);
 
-        mCursorAdapter = new ProductCursorAdapter(this, null);
+        mCursorAdapter = new ProductCursorAdapter(this, null, this);
         bookListView.setAdapter(mCursorAdapter);
 
         bookListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -173,5 +175,14 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
         // above is about to be closed. We need to make sure we are no
         // longer using it.
         mCursorAdapter.swapCursor(null);
+    }
+
+    @Override
+    public int onBookSold(int position, int newQuantity) {
+        ContentValues values = new ContentValues();
+        values.put(ProductEntry.COLUMN_PRODUCT_QUANTITY, newQuantity);
+        int rowUpdated = getContentResolver().update(Uri.withAppendedPath(ProductEntry.CONTENT_URI,
+                String.valueOf(bookListView.getItemIdAtPosition(position))), values, null, null);
+        return rowUpdated;
     }
 }

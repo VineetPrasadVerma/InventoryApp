@@ -15,7 +15,7 @@
     <string name="delete_all_books">Delete All Books</string>
     <string name="sale">Sale</string>
     <string name="available_quantity">Available Quantity -\u0020</string>
-    <string name="price_tag">Price -\u0020</string>
+    <string name="price_tag">Price -\u0020₹\u0020</string>
     <string name="empty_view_title_text">It\'s is bit lonely here</string>
     <string name="empty_view_subtitle_text">Get started by clicking the bottom book button</string>
     <string name="are_you_sure">Are you sure ?</string>
@@ -37,4 +37,7 @@
     <string name="discard">Discard</string>
     <string name="keep_editing">Keep Editing</string>
     <string name="fields_cant_be_empty">Fields can\'t be empty</string>
+    <string name="sold_book">Book sold successfully</string>
+    <string name="book_cannot_be_sold_unknown_error">Book cannot be sold due to unknown error</string>
+    <string name="not_in_stock">Book not in stock</string>
 </resources>

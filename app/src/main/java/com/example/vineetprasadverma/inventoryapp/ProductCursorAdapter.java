@@ -1,6 +1,5 @@
 package com.example.vineetprasadverma.inventoryapp;
 
-import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.view.LayoutInflater;
@@ -12,19 +11,22 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.vineetprasadverma.inventoryapp.data.ProductContract;
 import com.example.vineetprasadverma.inventoryapp.data.ProductContract.ProductEntry;
 
 public class ProductCursorAdapter extends CursorAdapter {
 
+    private Context mContext;
+    private ProductItemClickListener mListener;
     /**
      * Constructs a new {@link ProductCursorAdapter}.
      *
      * @param context The context
      * @param c       The cursor from which to get the data.
      */
-    public ProductCursorAdapter(Context context, Cursor c) {
-        super(context, c, 0);
+    public ProductCursorAdapter(Context context, Cursor c, ProductItemClickListener listener) {
+       super(context, c, 0);
+        mContext = context;
+        mListener = listener;
     }
 
     @Override
@@ -32,18 +34,17 @@ public class ProductCursorAdapter extends CursorAdapter {
         return LayoutInflater.from(context).inflate(R.layout.list_item, parent, false);
     }
 
-   /** @param view    Existing view, returned earlier by newView() method
+    /**
+     * @param view    Existing view, returned earlier by newView() method
      * @param context app context
      * @param cursor  The cursor from which to get the data. The cursor is already moved to the
      *                correct row.
-    */
+     */
     @Override
     public void bindView(View view, final Context context, Cursor cursor) {
         TextView bookTextView = view.findViewById(R.id.book_name);
         TextView priceTextView = view.findViewById(R.id.price);
-        TextView quantityTextView = view.findViewById(R.id.quantity);
-        Button saleButton = view.findViewById(R.id.sale_button);
-
+        final TextView quantityTextView = view.findViewById(R.id.quantity);
 
         int bookColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_NAME);
         int priceColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_PRICE);
@@ -56,5 +57,32 @@ public class ProductCursorAdapter extends CursorAdapter {
         bookTextView.setText(bookName);
         priceTextView.setText(String.valueOf(price));
         quantityTextView.setText(String.valueOf(quantity));
+
+        Button saleButton = view.findViewById(R.id.sale_button);
+        saleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String quantity = quantityTextView.getText().toString();
+                if (Integer.valueOf(quantity) > 0) {
+                    int newQuantity = Integer.valueOf(quantity) - 1;
+                    //Gets the position of button
+                    View relativeLayout = (View) view.getParent();
+                    View linearLayout = (View) relativeLayout.getParent();
+                    ListView listView = (ListView) linearLayout.getParent();
+                    int rows = mListener.onBookSold(listView.getPositionForView(view), newQuantity);
+                    if(rows > 0){
+                        Toast.makeText(mContext, R.string.sold_book , Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toast.makeText(mContext, R.string.book_cannot_be_sold_unknown_error, Toast.LENGTH_SHORT).show();
+                    }
+                }else{
+                    Toast.makeText(mContext, R.string.not_in_stock, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    public interface ProductItemClickListener{
+        int onBookSold(int position, int newQuantity);
     }
 }
