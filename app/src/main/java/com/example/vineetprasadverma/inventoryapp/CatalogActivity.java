@@ -57,7 +57,7 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
         bookListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(CatalogActivity.this, EditorActivity.class);
+                Intent intent = new Intent(CatalogActivity.this, ProductDetails.class);
                 Uri currentUri = ContentUris.withAppendedId(ProductEntry.CONTENT_URI, id);
                 intent.setData(currentUri);
                 startActivity(intent);

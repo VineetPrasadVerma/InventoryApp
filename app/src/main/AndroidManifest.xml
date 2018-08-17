@@ -24,6 +24,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".CatalogActivity" />
         </activity>
+        <activity
+            android:name=".ProductDetails"
+            android:parentActivityName=".CatalogActivity"
+            android:label="@string/book_details">
+        </activity>
         <provider
             android:name=".data.ProductProvider"
             android:authorities="com.example.vineetprasadverma.inventoryapp"
