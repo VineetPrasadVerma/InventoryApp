@@ -95,45 +95,54 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                 TextUtils.isEmpty(quantityString) && TextUtils.isEmpty(supplierNameString) &&
                 TextUtils.isEmpty(supplierPhoneNoString)) {
             Toast.makeText(this, getString(R.string.cant_save_empty_book), Toast.LENGTH_SHORT).show();
+            finish();
             return;
         }
 
-        if(TextUtils.isEmpty(priceString)){
-            priceString = "0";
-        }
-
-        // Create a ContentValues object where column names are the keys,
-        // and pet attributes from the editor are the values.
-        ContentValues values = new ContentValues();
-        values.put(ProductEntry.COLUMN_PRODUCT_NAME, bookString);
-        values.put(ProductEntry.COLUMN_PRODUCT_PRICE, priceString);
-        values.put(ProductEntry.COLUMN_PRODUCT_QUANTITY, quantityString);
-        values.put(ProductEntry.COLUMN_PRODUCT_SUPPLIER_NAME, supplierNameString);
-        values.put(ProductEntry.COLUMN_PRODUCT_SUPPLIER_PHONE_NUMBER, supplierPhoneNoString);
-
-        if (mCurrentProductUri == null) {
-            Uri newUri = getContentResolver().insert(ProductEntry.CONTENT_URI, values);
-            if (newUri == null) {
-                Toast.makeText(EditorActivity.this, getString(R.string.editor_insert_product_failed), Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(EditorActivity.this, getString(R.string.editor_insert_product_successful), Toast.LENGTH_SHORT).show();
-            }
+        // Check if this is supposed to be a new book
+        // and check if all the fields in the editor are blank.
+        if (TextUtils.isEmpty(bookString) || TextUtils.isEmpty(priceString) ||
+                TextUtils.isEmpty(quantityString) || TextUtils.isEmpty(supplierNameString) ||
+                TextUtils.isEmpty(supplierPhoneNoString)) {
+            Toast.makeText(this, getString(R.string.fields_cant_be_empty), Toast.LENGTH_SHORT).show();
         } else {
-            // Otherwise this is an EXISTING book, so update the book with content URI: mCurrentProductUri
-            // and pass in the new ContentValues. Pass in null for the selection and selection args
-            // because mCurrentProductUri will already identify the correct row in the database that
-            // we want to modify.
-            int rowsAffected = getContentResolver().update(mCurrentProductUri, values, null, null);
+            // Create a ContentValues object where column names are the keys,
+            // and pet attributes from the editor are the values.
+            ContentValues values = new ContentValues();
+            values.put(ProductEntry.COLUMN_PRODUCT_NAME, bookString);
+            values.put(ProductEntry.COLUMN_PRODUCT_PRICE, priceString);
+            values.put(ProductEntry.COLUMN_PRODUCT_QUANTITY, quantityString);
+            values.put(ProductEntry.COLUMN_PRODUCT_SUPPLIER_NAME, supplierNameString);
+            values.put(ProductEntry.COLUMN_PRODUCT_SUPPLIER_PHONE_NUMBER, supplierPhoneNoString);
 
-            // Show a toast message depending on whether or not the update was successful.
-            if (rowsAffected == 0) {
-                // If no rows were affected, then there was an error with the update.
-                Toast.makeText(this, getString(R.string.editor_update_product_failed),
-                        Toast.LENGTH_SHORT).show();
+            if (mCurrentProductUri == null) {
+                Uri newUri = getContentResolver().insert(ProductEntry.CONTENT_URI, values);
+                if (newUri == null) {
+                    Toast.makeText(EditorActivity.this, getString(R.string.editor_insert_product_failed), Toast.LENGTH_SHORT).show();
+                    finish();
+                } else {
+                    Toast.makeText(EditorActivity.this, getString(R.string.editor_insert_product_successful), Toast.LENGTH_SHORT).show();
+                    finish();
+                }
             } else {
-                // Otherwise, the update was successful and we can display a toast.
-                Toast.makeText(this, getString(R.string.editor_update_product_successful),
-                        Toast.LENGTH_SHORT).show();
+                // Otherwise this is an EXISTING book, so update the book with content URI: mCurrentProductUri
+                // and pass in the new ContentValues. Pass in null for the selection and selection args
+                // because mCurrentProductUri will already identify the correct row in the database that
+                // we want to modify.
+                int rowsAffected = getContentResolver().update(mCurrentProductUri, values, null, null);
+
+                // Show a toast message depending on whether or not the update was successful.
+                if (rowsAffected == 0) {
+                    // If no rows were affected, then there was an error with the update.
+                    Toast.makeText(this, getString(R.string.editor_update_product_failed),
+                            Toast.LENGTH_SHORT).show();
+                    finish();
+                } else {
+                    // Otherwise, the update was successful and we can display a toast.
+                    Toast.makeText(this, getString(R.string.editor_update_product_successful),
+                            Toast.LENGTH_SHORT).show();
+                    finish();
+                }
             }
         }
     }
@@ -163,7 +172,6 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         switch (item.getItemId()) {
             case R.id.action_save:
                 saveBook();
-                finish();
                 return true;
 
             case R.id.action_delete:

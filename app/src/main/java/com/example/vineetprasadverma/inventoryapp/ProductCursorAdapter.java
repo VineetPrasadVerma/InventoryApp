@@ -1,5 +1,6 @@
 package com.example.vineetprasadverma.inventoryapp;
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.view.LayoutInflater;
@@ -7,7 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CursorAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.vineetprasadverma.inventoryapp.data.ProductContract;
 import com.example.vineetprasadverma.inventoryapp.data.ProductContract.ProductEntry;
@@ -35,10 +38,12 @@ public class ProductCursorAdapter extends CursorAdapter {
      *                correct row.
     */
     @Override
-    public void bindView(View view, Context context, Cursor cursor) {
+    public void bindView(View view, final Context context, Cursor cursor) {
         TextView bookTextView = view.findViewById(R.id.book_name);
         TextView priceTextView = view.findViewById(R.id.price);
         TextView quantityTextView = view.findViewById(R.id.quantity);
+        Button saleButton = view.findViewById(R.id.sale_button);
+
 
         int bookColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_NAME);
         int priceColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_PRICE);
